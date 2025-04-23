@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maze Generator</title>
+  <style>
+    .container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;    
+    }
+    .game{
+        border: 50px ridge #D0D1AC;
+    }
+    canvas {
+      background: #948B89;
+    }
+  </style>
+</head>
+<body onload="init()">
+    <div class="container">
+        <div class="game">
+            <canvas id="maze"></canvas>
+        </div>
+    </div>
+</body>
+  <script src="script.js"></script>
+</html>
