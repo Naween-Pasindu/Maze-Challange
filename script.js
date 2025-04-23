@@ -130,10 +130,35 @@ function drawMaze() {
 
   if (stack.length > 0) {
     requestAnimationFrame(drawMaze);
+  }else{
+    stopSound()
   }
 }
 
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }    
+}
+
+function stopSound(){
+    while(StartSound.volume > 0){
+        StartSound.volume -= 0.1;
+    }
+    StartSound.stop();
+}
 
 function init(){
-    //drawMaze();
+    StartSound = new sound("sounds/generating.mp3");
+    StartSound.play();
+    drawMaze();
 }
