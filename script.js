@@ -236,14 +236,12 @@ document.addEventListener("keydown", (event) =>{
     }
     if(keyName == "w" || keyName == "s"){
         if(canMoveY(direction, currentPlayer)){
-            console.log(canMoveY(direction, currentPlayer))
             let {i, j} = currentPlayer;
             j += direction;
             currentPlayer = grid[i + j * 20]
         }
     }else if(keyName == "d" || keyName == "a"){
         if(canMoveX(direction, currentPlayer)){
-            console.log(canMoveY(direction, currentPlayer))
             let {i, j} = currentPlayer;
             i += direction;
             currentPlayer = grid[i + j * 20]
