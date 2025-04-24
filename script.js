@@ -42,11 +42,16 @@ class Cell {
 }
 
 const grid = [];
-for (let j = 0; j < rows; j++) {
-  for (let i = 0; i < cols; i++) {
-    grid.push(new Cell(i, j));
+
+const createGrid = () => {
+  for (let j = 0; j < rows; j++) {
+    for (let i = 0; i < cols; i++) {
+      grid.push(new Cell(i, j));
+    }
   }
 }
+
+createGrid();
 
 const index = (i, j) => {
   if (i < 0 || j < 0 || i >= cols || j >= rows) return -1;
@@ -122,6 +127,7 @@ const removeWalls = (a, b) => {
   }
 };
 
+let isGameStarted = false;
 let current = grid[0];
 let currentPlayer = grid[0];
 let mazeGenerated = false;
@@ -132,6 +138,19 @@ let keyDirection = {"w": -1, "s": 1, "d": 1, "a": -1}
 const startCell = grid[index(0, 0)];
 const endCell = grid[index(cols - 1, rows - 1)];
 
+function replay(){
+  grid.length = 0;
+  const begin = document.querySelector('.begin');
+  begin.style.display = 'none';
+  createGrid();
+  current = grid[0];
+  currentPlayer = current;
+  mazeGenerated = false;
+  current.visited = true;
+  stack.push(current);
+  isGameStarted = false
+  init()
+}
 function drawMaze() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   grid.forEach(cell => cell.draw());
@@ -178,7 +197,17 @@ function stopSound(){
         StartSound.volume -= 0.1;
     }
     StartSound.stop();
+    isGameStarted = true;
     play();
+}
+
+function showWin(){
+  const begin = document.querySelector('.begin');
+  const youWin = document.getElementById('youWin');
+  const startGameDiv = document.getElementById('startGame');
+  startGameDiv.style.display = "none";
+  begin.style.display = "block";
+  youWin.style.display = "block";
 }
 
 function play(){
@@ -186,7 +215,11 @@ function play(){
     startCell.highlight("green");
     endCell.highlight("red");
     currentPlayer.highlight("blue")
-    requestAnimationFrame(play)
+    if(currentPlayer != endCell){
+      requestAnimationFrame(play)
+    }else{
+      showWin();
+    }
 }
 
 function init(){
@@ -198,7 +231,9 @@ function init(){
 document.addEventListener("keydown", (event) =>{
     const keyName = event.key.toLowerCase();
     const direction =  keyDirection[keyName];
-    console.log(currentPlayer)
+    if(isGameStarted == false){
+        return;
+    }
     if(keyName == "w" || keyName == "s"){
         if(canMoveY(direction, currentPlayer)){
             console.log(canMoveY(direction, currentPlayer))

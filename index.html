@@ -50,12 +50,19 @@
       transform: scale(1.05);
     }
 
+    .win{
+      display: none;
+    }
   </style>
 </head>
 <body >
     <div class="begin">
         <div class="container">
-            <button class="start-button" onclick="startGeneration()">Start Game</button>
+            <button class="start-button" id="startGame" onclick="startGeneration()">Start Game</button>
+            <div class="win" id="youWin">
+              <h1 class="win-text">You Win!</h1>
+              <button class="start-button" onclick="replay()">Play Again</button>
+          </div>
         </div>
     </div>
     <div class="container">
@@ -71,5 +78,6 @@ function startGeneration(){
     begin.style.display = 'none';
     init();
 }
+
   </script>
 </html>
