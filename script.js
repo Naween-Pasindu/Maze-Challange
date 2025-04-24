@@ -5,26 +5,12 @@ const rows = 20;
 const cellSize = screen.height * 0.7 / rows;
 canvas.width = cols * cellSize;
 canvas.height = rows * cellSize;
-
-class Player{
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.width = cellSize * 0.5;
-        this.height = cellSize * 0.5;
-    }
-    
-    draw() {
-        ctx.fillStyle = "blue";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-}
-
 class Cell {
   constructor(i, j) {
     this.i = i;
     this.j = j;
     this.visited = false;
+    this.highlightColor = "#334155"
     this.walls = [true, true, true, true]; // top, right, bottom, left
   }
 
@@ -85,6 +71,38 @@ const checkNeighbors = (cell) => {
   return undefined;
 };
 
+const canMoveX = (direction, cell) => {
+    // top, right, bottom, left
+    const { i, j } = cell;
+    let hasWall;
+    if(direction > 0){
+        if(i == 19){ return false;}
+        const right = grid[index(i + 1, j)];
+        hasWall = right.walls[3];
+    }else{
+        if(i == 0){ return false;}
+        const left = grid[index(i - 1, j)];
+        hasWall = left.walls[1];
+    }
+    return !hasWall;
+}
+
+const canMoveY = (direction, cell) => {
+    // top, right, bottom, left
+    const { i, j } = cell;
+    let hasWall;
+    if(direction > 0){
+        if(j == 19){ return false;}
+        const bottom = grid[index(i, j + 1)];
+        hasWall = bottom.walls[0];
+    }else{
+        if(j == 0){ return false;}
+        const top = grid[index(i, j - 1)];
+        hasWall = top.walls[2];
+    }
+    return !hasWall;
+}
+
 const removeWalls = (a, b) => {
   const x = a.i - b.i;
   const y = a.j - b.j;
@@ -105,8 +123,11 @@ const removeWalls = (a, b) => {
 };
 
 let current = grid[0];
+let currentPlayer = grid[0];
+let mazeGenerated = false;
 current.visited = true;
 const stack = [current];
+let keyDirection = {"w": -1, "s": 1, "d": 1, "a": -1}
 
 const startCell = grid[index(0, 0)];
 const endCell = grid[index(cols - 1, rows - 1)];
@@ -126,11 +147,12 @@ function drawMaze() {
     current = next;
   } else if (stack.length > 0) {
     current = stack.pop();
-  }
+  }3
 
   if (stack.length > 0) {
     requestAnimationFrame(drawMaze);
   }else{
+    mazeGenerated = true;
     stopSound()
   }
 }
@@ -156,6 +178,15 @@ function stopSound(){
         StartSound.volume -= 0.1;
     }
     StartSound.stop();
+    play();
+}
+
+function play(){
+    grid.forEach(cell => cell.draw());
+    startCell.highlight("green");
+    endCell.highlight("red");
+    currentPlayer.highlight("blue")
+    requestAnimationFrame(play)
 }
 
 function init(){
@@ -163,3 +194,24 @@ function init(){
     StartSound.play();
     drawMaze();
 }
+
+document.addEventListener("keydown", (event) =>{
+    const keyName = event.key.toLowerCase();
+    const direction =  keyDirection[keyName];
+    console.log(currentPlayer)
+    if(keyName == "w" || keyName == "s"){
+        if(canMoveY(direction, currentPlayer)){
+            console.log(canMoveY(direction, currentPlayer))
+            let {i, j} = currentPlayer;
+            j += direction;
+            currentPlayer = grid[i + j * 20]
+        }
+    }else if(keyName == "d" || keyName == "a"){
+        if(canMoveX(direction, currentPlayer)){
+            console.log(canMoveY(direction, currentPlayer))
+            let {i, j} = currentPlayer;
+            i += direction;
+            currentPlayer = grid[i + j * 20]
+        }
+    }
+})
